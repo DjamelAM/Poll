@@ -3,14 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -20,56 +21,78 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $name;
+    private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="boolean")
      */
-    private $mail;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Question::class, mappedBy="user_id")
-     */
-    private $questions;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Result::class, mappedBy="user")
-     */
-    private $results;
-
-    public function __construct()
-    {
-        $this->questions = new ArrayCollection();
-        $this->results = new ArrayCollection();
-    }
+    private $isVerified = false;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getEmail(): ?string
     {
-        return $this->name;
+        return $this->email;
     }
 
-    public function setName(string $name): self
+    public function setEmail(string $email): self
     {
-        $this->name = $name;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
     {
-        return $this->password;
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
+    {
+        return (string) $this->password;
     }
 
     public function setPassword(string $password): self
@@ -79,74 +102,34 @@ class User
         return $this;
     }
 
-    public function getMail(): ?string
+    /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
     {
-        return $this->mail;
-    }
-
-    public function setMail(string $mail): self
-    {
-        $this->mail = $mail;
-
-        return $this;
+        return null;
     }
 
     /**
-     * @return Collection|Question[]
+     * @see UserInterface
      */
-    public function getQuestions(): Collection
+    public function eraseCredentials()
     {
-        return $this->questions;
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
-    public function addQuestion(Question $question): self
+    public function isVerified(): bool
     {
-        if (!$this->questions->contains($question)) {
-            $this->questions[] = $question;
-            $question->setUserId($this);
-        }
-
-        return $this;
+        return $this->isVerified;
     }
 
-    public function removeQuestion(Question $question): self
+    public function setIsVerified(bool $isVerified): self
     {
-        if ($this->questions->removeElement($question)) {
-            // set the owning side to null (unless already changed)
-            if ($question->getUserId() === $this) {
-                $question->setUserId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Result[]
-     */
-    public function getResults(): Collection
-    {
-        return $this->results;
-    }
-
-    public function addResult(Result $result): self
-    {
-        if (!$this->results->contains($result)) {
-            $this->results[] = $result;
-            $result->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeResult(Result $result): self
-    {
-        if ($this->results->removeElement($result)) {
-            // set the owning side to null (unless already changed)
-            if ($result->getUser() === $this) {
-                $result->setUser(null);
-            }
-        }
+        $this->isVerified = $isVerified;
 
         return $this;
     }
