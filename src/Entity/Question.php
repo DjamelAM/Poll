@@ -43,6 +43,8 @@ class Question
      */
     private $user;
 
+    
+
     public function __construct()
     {
         $this->answers = new ArrayCollection();
@@ -125,4 +127,6 @@ class Question
     public function __toString() {
      return $this->label;
     }
+
+    
 }

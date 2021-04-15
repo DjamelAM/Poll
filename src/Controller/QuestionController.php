@@ -12,9 +12,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
+
+
 #[Route('/questions')]
 class QuestionController extends AbstractController
 {
+
+    
+
+    
     #[Route('/', name: 'question_index', methods: ['GET'])]
     public function index(QuestionRepository $questionRepository): Response
     {
@@ -22,7 +29,7 @@ class QuestionController extends AbstractController
             'questions' => $questionRepository->findAll(),
         ]);
     }
-
+    
     #[Route('/new', name: 'question_new', methods: ['GET', 'POST'])]
     public function new(Request $request, UserRepository $userRepository): Response
     {
@@ -32,7 +39,7 @@ class QuestionController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            $question->setUser($userRepository->find(1));
+            $question->setUser($this->getUser());
             $entityManager->persist($question);
             $entityManager->flush();
 
@@ -85,4 +92,6 @@ class QuestionController extends AbstractController
 
         return $this->redirectToRoute('question_index');
     }
+
+    
 }
