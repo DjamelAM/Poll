@@ -6,22 +6,9 @@
 <h1>User interface</h1>
 
 <div class="grix xs4 container">
-    <div class="col-xs1">Email:</div>
-    <div class="col-xs3">{{app.user.email}}</div>
-    <div class="col-xs3">Username : </div>
-    <div class="col-xs1">oui</div>
-    <div class="col-xs4">
-        <a href="#" class="btn blue">Modifier le profil</a>
-        <a href="#" class="btn blue">Modifier le mot de passe</a>
-    </div>
+   {{form(form)}}
 
-    <div class="col-xs4">
-        <h1>Questions de {{app.user.username}} ({{app.user.questions|length}})</h1>
-    </div>
-    {% for question in app.user.questions %}
-    <div class="col-xs1">Question :</div>
-    <div class="col-xs3">{{app.user.questions}}</div>
-    {% endfor %}
+   
     
 
 </div>

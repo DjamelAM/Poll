@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+<h1>Update password</h1>
+
+<div class="grix xs4 container">
+    <form method="post">
+        {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+         {% endfor %}
+        
+        <div class="form-group">
+            <label class="small mb-1" for="inputPassword">New Password</label>
+            <input class="form-control py-4" id="inputPassword" type="password" name="inputPassword"  placeholder="Enter password" />
+        </div>
+
+        <div class="form-group">
+            <label class="small mb-1" for="confirmPassword">Confirm Password</label>
+            <input class="form-control py-4" id="confirmPassword" type="password" name="confirmPassword"  placeholder="Confirm password" />
+        </div>
+        
+      
+        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+           
+            <button class="btn btn-primary"  type="submit">Login</button>
+        </div>
+    </form>
+
+</div>
+    
+{% endblock %}

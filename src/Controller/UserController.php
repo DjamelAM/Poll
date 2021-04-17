@@ -9,6 +9,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\EditProfileType;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+
 
 #[Route('/users')]
 class UserController extends AbstractController
@@ -40,6 +45,48 @@ class UserController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
         ]);
+    }
+    #[Route('/profile/edit', name: 'user_profile_edit', methods: ['GET', 'POST'])]
+    public function editProfile(Request $request): Response
+    {
+        $user = $this->getUser();
+        $form = $this->createForm(EditProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('message', 'Profile updated');
+            return $this->redirectToRoute('user_index');
+        }
+
+        return $this->render('user/editprofile.html.twig', [
+            
+            'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/password/edit', name: 'user_password_edit', methods: ['GET', 'POST'])]
+    public function editPassword(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+        if($request->isMethod('POST')){
+            $em = $this->getDoctrine()->getManager();
+            $user = $this->getUser();
+           
+
+            if($request->request->get('inputPassword') == $request->request->get('confirmPassword')){
+                $user->setPassword($passwordEncoder->encodePassword($user, $request->request->get('inputPassword')));
+                $em->flush();
+                $this->addFlash('message', 'Password successfully updated');
+                return $this->redirectToRoute('user_index');
+
+            }else{
+                $this->addFlash('error', 'Password are not matching');
+            }
+        }
+
+        return $this->render('user/editpass.html.twig');
     }
 
     #[Route('/{id}', name: 'user_show', methods: ['GET'])]
@@ -79,4 +126,6 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('user_index');
     }
+
+  
 }

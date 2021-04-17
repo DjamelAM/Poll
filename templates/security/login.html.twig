@@ -16,13 +16,13 @@
                                     <form method="post">
                                         {% if error %}
                                         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                                    {% endif %}
+                                         {% endif %}
                                 
-                                    {% if app.user %}
+                                         {% if app.user %}
                                         <div class="mb-3">
                                             You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
                                         </div>
-                                    {% endif %}
+                                        {% endif %}
                                    
                                         <div class="form-group">
                                             <label class="small mb-1" for="inputEmail">Email</label>
@@ -32,9 +32,7 @@
                                             <label class="small mb-1" for="inputPassword">Password</label>
                                             <input class="form-control py-4" id="inputPassword" type="password" name="password"  placeholder="Enter password" />
                                         </div>
-                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"
-                                                                                
-    >
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
