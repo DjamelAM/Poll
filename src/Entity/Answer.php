@@ -25,7 +25,7 @@ class Answer
     private $label;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Question::class, inversedBy="ans1")
+     * @ORM\ManyToOne(targetEntity=Question::class, inversedBy="answer")
      * @ORM\JoinColumn(nullable=false)
      */
     private $question;
@@ -35,9 +35,11 @@ class Answer
      */
     private $results;
 
+
+
+
     public function __construct()
     {
-        $this->results = new ArrayCollection();
         $this->results = new ArrayCollection();
     }
 
@@ -79,28 +81,30 @@ class Answer
         return $this->results;
     }
 
-    public function addResults(Result $results): self
+    public function addResult(Result $result): self
     {
-        if (!$this->results->contains($results)) {
-            $this->results[] = $results;
-            $results->setAnswer($this);
+        if (!$this->results->contains($result)) {
+            $this->results[] = $result;
+            $result->setAnswer($this);
         }
 
         return $this;
     }
 
-    public function removeResults(Result $results): self
+    public function removeResult(Result $result): self
     {
-        if ($this->results->removeElement($results)) {
+        if ($this->results->removeElement($result)) {
             // set the owning side to null (unless already changed)
-            if ($results->getAnswer() === $this) {
-                $results->setAnswer(null);
+            if ($result->getAnswer() === $this) {
+                $result->setAnswer(null);
             }
         }
 
         return $this;
     }
 
-   
+    public function __toString()
+    {
+        return $this->label;
     }
-
+}

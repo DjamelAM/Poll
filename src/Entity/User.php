@@ -163,7 +163,7 @@ class User implements UserInterface
     {
         if (!$this->questions->contains($question)) {
             $this->questions[] = $question;
-            $question->setUser1($this);
+            $question->setUser($this);
         }
 
         return $this;
@@ -173,8 +173,8 @@ class User implements UserInterface
     {
         if ($this->questions->removeElement($question)) {
             // set the owning side to null (unless already changed)
-            if ($question->getUser1() === $this) {
-                $question->setUser1(null);
+            if ($question->getUser() === $this) {
+                $question->setUser(null);
             }
         }
 
@@ -186,5 +186,9 @@ class User implements UserInterface
         $this->username = $username;
 
         return $this;
+    }
+    public function __toString()
+    {
+        return $this->email;
     }
 }

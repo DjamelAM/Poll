@@ -30,6 +30,8 @@ class ResultController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $result->setUser($this->getUser());
+            $result->setIp($request->getClientIp());
             $entityManager->persist($result);
             $entityManager->flush();
 
@@ -71,7 +73,7 @@ class ResultController extends AbstractController
     #[Route('/{id}', name: 'result_delete', methods: ['POST'])]
     public function delete(Request $request, Result $result): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$result->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $result->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($result);
             $entityManager->flush();

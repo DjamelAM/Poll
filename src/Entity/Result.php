@@ -19,28 +19,36 @@ class Result
      */
     private $id;
 
-    
+
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="results")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
+
     /**
-     * @ORM\ManyToOne(targetEntity=Question::class)
+     * @ORM\ManyToOne(targetEntity=Question::class, inversedBy="results")
      * @ORM\JoinColumn(nullable=false)
      */
     private $question;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Answer::class, inversedBy="resultttt")
+     * @ORM\ManyToOne(targetEntity=Answer::class, inversedBy="results")
      * @ORM\JoinColumn(nullable=false)
      */
     private $answer;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $ip;
+
+
+
     public function __construct()
     {
-        $this->answer = new ArrayCollection();
+        $this->answers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,6 +67,9 @@ class Result
 
         return $this;
     }
+
+
+
 
     public function getQuestion(): ?Question
     {
@@ -82,5 +93,22 @@ class Result
         $this->answer = $answer;
 
         return $this;
+    }
+
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+
+    public function setIp(string $ip): self
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->anwer->getLabel();
     }
 }

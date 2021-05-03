@@ -30,24 +30,26 @@ class Question
      */
     private $isMultiAnswer;
 
-  
+
 
     /**
-     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="question_id")
+     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="question")
      */
     private $answers;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="questions")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="question")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
-    
+
+
 
     public function __construct()
     {
         $this->answers = new ArrayCollection();
+        $this->results = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,7 +96,7 @@ class Question
     {
         if (!$this->answers->contains($answer)) {
             $this->answers[] = $answer;
-            $answer->setQuestionId($this);
+            $answer->setQuestion($this);
         }
 
         return $this;
@@ -104,8 +106,8 @@ class Question
     {
         if ($this->answers->removeElement($answer)) {
             // set the owning side to null (unless already changed)
-            if ($answer->getQuestionId() === $this) {
-                $answer->setQuestionId(null);
+            if ($answer->getQuestion() === $this) {
+                $answer->setQuestion(null);
             }
         }
 
@@ -124,9 +126,8 @@ class Question
         return $this;
     }
 
-    public function __toString() {
-     return $this->label;
+    public function __toString()
+    {
+        return $this->label;
     }
-
-    
 }

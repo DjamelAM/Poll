@@ -12,10 +12,9 @@ class ResultType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('user')
+
             ->add('question')
-            ->add('answer')
-        ;
+            ->add('answer');
     }
 
     public function configureOptions(OptionsResolver $resolver)

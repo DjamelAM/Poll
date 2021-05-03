@@ -47,4 +47,16 @@ class ResultRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getResultByQuestion($question)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+
+        $qb->select('IDENTITY(o.answer) as answer_id, COUNT(o.id) as number')
+            ->where('o.question =' . $question->getId())
+            ->groupBy('o.answer');
+
+        return $qb->getQuery()->getArrayResult();
+    }
 }

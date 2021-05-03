@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %} {% block title %}Result index{% endblock %} {%
+block body %}
+
+<h1>{{ question.label }}</h1>
+
+<form action="{{ path('question_answer', { id: question.id }) }}" method="POST">
+  {% set input_type = question.getIsMultiAnswer() ? 'checkbox' : 'radio' %} {%
+  for choice in question.answers %}
+  <input type="{{ input_type }}" name="answer[]" value="{{ choice.id }}" />
+  {{ choice.label }} <br />
+  {% endfor %}
+  <button class="btn">Send</button>
+</form>
+
+{% endblock %}

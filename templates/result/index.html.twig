@@ -1,33 +1,39 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %} {% block title %}Result index{% endblock %} {%
+block body %}
+<h1>Result index</h1>
 
-{% block title %}Result index{% endblock %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>User</th>
+      <th>Question label</th>
+      <th>Answer label</th>
+      <th>actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for result in results %}
 
-{% block body %}
-    <h1>Result index</h1>
+    <tr>
+      <td>{{ result.id }}</td>
+      <td>{{ result.getUser() }}</td>
+      <td>{{ result.getQuestion() }}</td>
+      <td>{{ result.getAnswer() }}</td>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for result in results %}
-            <tr>
-                <td>{{ result.id }}</td>
-                <td>
-                    <a href="{{ path('result_show', {'id': result.id}) }}">show</a>
-                    <a href="{{ path('result_edit', {'id': result.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+      <td>
+        <a href="{{ path('result_show', { id: result.id }) }}">show</a>
+        <a href="{{ path('result_edit', { id: result.id }) }}">edit</a>
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="2">no records found</td>
+    </tr>
 
-    <a href="{{ path('result_new') }}">Create new</a>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{{ path('result_new') }}">Create new</a>
 {% endblock %}
