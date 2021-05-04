@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Result;
 use App\Form\ResultType;
 use App\Repository\ResultRepository;
+use App\Services\PaginatorService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,17 +16,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResultController extends AbstractController
 {
     #[Route('/', name: 'result_index', methods: ['GET'])]
-    public function index(ResultRepository $resultRepository): Response
+    public function index(Request $request, ResultRepository $resultRepository, PaginatorService $paginatorService, PaginatorInterface $paginatorInterface): Response
     {
+        $donnees = $resultRepository->findAll();
+        $results = $paginatorService->paginator($request, $donnees, $paginatorInterface);
         return $this->render('result/index.html.twig', [
-            'results' => $resultRepository->findAll(),
+            'results' => $results,
         ]);
     }
     #[Route('/myresults', name: 'result_mine', methods: ['GET'])]
-    public function myResults(ResultRepository $resultRepository): Response
+    public function myResults(Request $request, ResultRepository $resultRepository, PaginatorService $paginatorService, PaginatorInterface $paginatorInterface): Response
     {
+        $donnees = $resultRepository->findBy(["user" => $this->getUser()->getId()]);
+        $results = $paginatorService->paginator($request, $donnees, $paginatorInterface);
+
         return $this->render('result/index.html.twig', [
-            'results' => $resultRepository->findBy(["user" => $this->getUser()->getId()]),
+            'results' =>  $results,
         ]);
     }
 

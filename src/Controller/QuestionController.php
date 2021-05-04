@@ -12,11 +12,12 @@ use App\Repository\UserRepository;
 use App\Repository\AnswerRepository;
 use App\Repository\ResultRepository;
 use App\Services\PaginatorService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Knp\Component\Pager\PaginatorInterface;
+
 
 use Symfony\Component\VarDumper\VarDumper;
 
@@ -80,11 +81,13 @@ class QuestionController extends AbstractController
     #[Route('/{id}', name: 'question_show', methods: ['GET'])]
     public function show(Question $question, AnswerRepository $answerRepository): Response
     {
+        $date = new \DateTime('NOW');
         //$answer = $answerRepository->findBy(['question_id' => $question->getId()]);
         $answer = $question->getAnswers();
         return $this->render('question/show.html.twig', [
             'question' => $question,
             'answers' => $answer,
+            'date' => $date,
         ]);
     }
 
@@ -122,25 +125,32 @@ class QuestionController extends AbstractController
     #[Route('/{id}/results', name: 'question_answer', methods: ['GET', 'POST'])]
     public function answer(Request $request, Question $question, AnswerRepository $answertRepository): Response
     {
-        if ($answertRepository->haveAlreadyAnswered($question->getId(), $request->getClientIp())) {
+        if ($question->getEndDate() == null || $question->getEndDate() > new \DateTime('NOW')) {
+            if ($answertRepository->haveAlreadyAnswered($question->getId(), $request->getClientIp())) {
 
-            $this->addFlash('error', 'You already answered on this poll');
-            return $this->redirectToRoute('questions_results', ['id' => $question->getId()]);
-        } else if ($request->getMethod() == "POST") {
-            $trucs = $request->request->get('answer');
-            $entityManager = $this->getDoctrine()->getManager();
-            foreach ($trucs as $answerId) {
-                $result = new Result();
-                $result->setUser($this->getUser());
-                $result->setIp($request->getClientIp());
-                $result->setQuestion($question);
-                $result->setAnswer($answertRepository->find($answerId));
-                $entityManager->persist($result);
-                $entityManager->flush();
+                $this->addFlash('error', 'You already answered on this poll');
+                return $this->redirectToRoute('questions_results', ['id' => $question->getId()]);
+            } else if ($request->getMethod() == "POST") {
+                $trucs = $request->request->get('answer');
+                $entityManager = $this->getDoctrine()->getManager();
+                foreach ($trucs as $answerId) {
+                    $result = new Result();
+                    $result->setUser($this->getUser());
+                    $result->setIp($request->getClientIp());
+                    $result->setQuestion($question);
+                    $result->setAnswer($answertRepository->find($answerId));
+                    $entityManager->persist($result);
+                    $entityManager->flush();
+                }
+                $this->addFlash('success', 'result added');
+                return $this->redirectToRoute('question_stats', ['id' => $question->getId()]);
             }
-            $this->addFlash('success', 'result added');
-            return $this->redirectToRoute('question_stats', ['id' => $question->getId()]);
+        } else {
+            $this->addFlash('error', 'This poll has already ended');
+            return $this->redirectToRoute('question_show', ['id' => $question->getId()]);
         }
+
+
 
 
         return $this->render('question/answer.html.twig', [

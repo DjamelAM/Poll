@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %} {% block title %}Admin Panel{% endblock %} {%
+block body %}
+<h1>Admin Panel</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>email</th>
+      <th>username</th>
+      <th>actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.username }}</td>
+
+      <td>
+        <a href="{{ path('user_show', { id: user.id }) }}">show</a>
+        {% if app.user %}
+        <a href="{{ path('user_edit', { id: user.id }) }}">edit</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="4">no records found</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{{ knp_pagination_render(users) }}
+
+<a href="{{ path('user_new') }}">Create new</a>
+{% endblock %}

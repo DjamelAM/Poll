@@ -6,6 +6,8 @@ use App\Entity\Question;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
 
 class QuestionType extends AbstractType
 {
@@ -14,7 +16,10 @@ class QuestionType extends AbstractType
         $builder
             ->add('label')
             ->add('isMultiAnswer')
-            ->add('isUserOnly');
+            ->add('isUserOnly')
+            ->add('endDate', DateType::class, [
+                'widget' => 'choice',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

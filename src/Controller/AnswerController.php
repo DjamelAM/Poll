@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Answer;
 use App\Form\AnswerType;
 use App\Repository\AnswerRepository;
+use App\Services\PaginatorService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,10 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnswerController extends AbstractController
 {
     #[Route('/', name: 'answer_index', methods: ['GET'])]
-    public function index(AnswerRepository $answerRepository): Response
+    public function index(Request $request, AnswerRepository $answerRepository, PaginatorService $paginatorService, PaginatorInterface $paginatorInterface): Response
     {
+        $donnees = $answerRepository->findAll();
+        $answers = $paginatorService->paginator($request, $donnees, $paginatorInterface);
         return $this->render('answer/index.html.twig', [
-            'answers' => $answerRepository->findAll(),
+            'answers' => $answers,
         ]);
     }
 
@@ -71,7 +75,7 @@ class AnswerController extends AbstractController
     #[Route('/{id}', name: 'answer_delete', methods: ['POST'])]
     public function delete(Request $request, Answer $answer): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$answer->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $answer->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($answer);
             $entityManager->flush();

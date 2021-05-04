@@ -21,9 +21,7 @@ class UserController extends AbstractController
     #[Route('/', name: 'user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
+        return $this->render('user/index.html.twig', [$userRepository->findAll()]);
     }
 
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]
@@ -63,25 +61,24 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/editprofile.html.twig', [
-            
+
             'form' => $form->createView(),
         ]);
     }
     #[Route('/password/edit', name: 'user_password_edit', methods: ['GET', 'POST'])]
     public function editPassword(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
-        if($request->isMethod('POST')){
+        if ($request->isMethod('POST')) {
             $em = $this->getDoctrine()->getManager();
             $user = $this->getUser();
-           
 
-            if($request->request->get('inputPassword') == $request->request->get('confirmPassword')){
+
+            if ($request->request->get('inputPassword') == $request->request->get('confirmPassword')) {
                 $user->setPassword($passwordEncoder->encodePassword($user, $request->request->get('inputPassword')));
                 $em->flush();
                 $this->addFlash('message', 'Password successfully updated');
                 return $this->redirectToRoute('user_index');
-
-            }else{
+            } else {
                 $this->addFlash('error', 'Password are not matching');
             }
         }
@@ -118,7 +115,7 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($user);
             $entityManager->flush();
@@ -126,6 +123,4 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('user_index');
     }
-
-  
 }
