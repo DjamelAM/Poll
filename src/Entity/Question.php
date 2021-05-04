@@ -43,6 +43,11 @@ class Question
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isUserOnly;
+
 
 
 
@@ -129,5 +134,17 @@ class Question
     public function __toString()
     {
         return $this->label;
+    }
+
+    public function getIsUserOnly(): ?bool
+    {
+        return $this->isUserOnly;
+    }
+
+    public function setIsUserOnly(bool $isUserOnly): self
+    {
+        $this->isUserOnly = $isUserOnly;
+
+        return $this;
     }
 }

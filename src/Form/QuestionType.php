@@ -14,8 +14,7 @@ class QuestionType extends AbstractType
         $builder
             ->add('label')
             ->add('isMultiAnswer')
-           
-        ;
+            ->add('isUserOnly');
     }
 
     public function configureOptions(OptionsResolver $resolver)

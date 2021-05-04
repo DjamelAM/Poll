@@ -29,6 +29,7 @@ block body %}
     {% endfor %}
   </tbody>
 </table>
+{{ knp_pagination_render(questions) }}
 
 <a href="{{ path('question_new') }}">Create new</a>
 {% endblock %}

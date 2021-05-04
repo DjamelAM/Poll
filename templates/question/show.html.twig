@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %} {% block title %}Question{% endblock %} {% block
-body %}
+body %} {% if (question.isUserOnly==true and app.user) or question.isUserOnly ==
+false %}
 <h1>Question</h1>
 
 <table class="table">
@@ -13,8 +14,12 @@ body %}
       <td>{{ question.label }}</td>
     </tr>
     <tr>
-      <th>IsMultiAnswer</th>
+      <th>Is Multi Answer ?</th>
       <td>{{ question.isMultiAnswer ? "Yes" : "No" }}</td>
+    </tr>
+    <tr>
+      <th>Is User Only ?</th>
+      <td>{{ question.isUserOnly ? "Yes" : "No" }}</td>
     </tr>
   </tbody>
 </table>
@@ -36,11 +41,13 @@ body %}
 </table>
 
 <a href="{{ path('question_index') }}">back to list</a>
-
+{% if app.user %}
 <a href="{{ path('question_edit', { id: question.id }) }}">edit</a>
-<a href="">add choice -- Not working</a>
+
+<a href="{{ path('question_choice', { id: question.id }) }}">add choice</a>
+{% endif %}
 <a href="{{ path('question_answer', { id: question.id }) }}">answer</a>
 <a href="{{ path('question_stats', { id: question.id }) }}">stats</a>
 
 {{ include("question/_delete_form.html.twig") }}
-{% endblock %}
+{% endif %} {% endblock %}

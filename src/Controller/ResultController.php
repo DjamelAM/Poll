@@ -20,6 +20,13 @@ class ResultController extends AbstractController
             'results' => $resultRepository->findAll(),
         ]);
     }
+    #[Route('/myresults', name: 'result_mine', methods: ['GET'])]
+    public function myResults(ResultRepository $resultRepository): Response
+    {
+        return $this->render('result/index.html.twig', [
+            'results' => $resultRepository->findBy(["user" => $this->getUser()->getId()]),
+        ]);
+    }
 
     #[Route('/new', name: 'result_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response

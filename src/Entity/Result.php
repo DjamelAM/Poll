@@ -22,7 +22,7 @@ class Result
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="results")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 

@@ -4,15 +4,20 @@ namespace App\Controller;
 
 use App\Entity\Question;
 use App\Entity\Result;
+use App\Entity\Answer;
+use App\Form\AnswerType;
 use App\Form\QuestionType;
 use App\Repository\QuestionRepository;
 use App\Repository\UserRepository;
 use App\Repository\AnswerRepository;
 use App\Repository\ResultRepository;
+use App\Services\PaginatorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
+
 use Symfony\Component\VarDumper\VarDumper;
 
 #[Route('/questions')]
@@ -20,28 +25,39 @@ class QuestionController extends AbstractController
 {
 
 
-
-
     #[Route('/', name: 'question_index', methods: ['GET'])]
-    public function index(QuestionRepository $questionRepository): Response
+    public function index(Request $request, QuestionRepository $questionRepository, PaginatorInterface $paginator, PaginatorService $paginatorService): Response
     {
 
+        if ($this->getUser() == null) {
+            $donnees = $questionRepository->findBy(["isUserOnly" => false]);
+
+            $questions = $paginatorService->paginator($request, $donnees, $paginator);
+            return $this->render('question/index.html.twig', [
+                'questions' => $questions,
+            ]);
+        }
+        $donneesUserLog = $questionRepository->findAll();
+        $questionsUserLog = $paginatorService->paginator($request, $donneesUserLog, $paginator);
+
         return $this->render('question/index.html.twig', [
-            'questions' => $questionRepository->findAll(),
+            'questions' =>  $questionsUserLog,
         ]);
     }
 
     #[Route('/myquestions', name: 'question_mine', methods: ['GET'])]
-    public function myquestions(QuestionRepository $questionRepository): Response
+    public function myquestions(Request $request, QuestionRepository $questionRepository, PaginatorInterface $paginator, PaginatorService $paginatorService): Response
     {
 
+        $donnees = $questionRepository->findBy(["user" => $this->getUser()->getId()]);
+        $questions = $paginatorService->paginator($request, $donnees, $paginator);
         return $this->render('question/mine.html.twig', [
-            'questions' => $questionRepository->findBy(["user" => $this->getUser()->getId()]),
+            'questions' => $questions,
         ]);
     }
 
     #[Route('/new', name: 'question_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserRepository $userRepository): Response
+    public function new(Request $request,  QuestionRepository $questionRepository): Response
     {
         $question = new Question();
         $form = $this->createForm(QuestionType::class, $question);
@@ -53,9 +69,8 @@ class QuestionController extends AbstractController
             $entityManager->persist($question);
             $entityManager->flush();
 
-            return $this->redirectToRoute('question_index');
+            return $this->redirectToRoute('question_choice', ['id' => $question->getId()]);
         }
-
         return $this->render('question/new.html.twig', [
             'question' => $question,
             'form' => $form->createView(),
@@ -104,7 +119,7 @@ class QuestionController extends AbstractController
     }
 
 
-    #[Route('/results/{id}', name: 'question_answer', methods: ['GET', 'POST'])]
+    #[Route('/{id}/results', name: 'question_answer', methods: ['GET', 'POST'])]
     public function answer(Request $request, Question $question, AnswerRepository $answertRepository): Response
     {
         if ($answertRepository->haveAlreadyAnswered($question->getId(), $request->getClientIp())) {
@@ -133,7 +148,7 @@ class QuestionController extends AbstractController
         ]);
     }
 
-    #[Route('/stats/{id}', name: 'question_stats', methods: ['GET', 'POST'])]
+    #[Route('/{id}/stats', name: 'question_stats', methods: ['GET', 'POST'])]
     public function stats(Request $request, Question $question, ResultRepository $resultRepository, AnswerRepository $answerRepository): Response
     {
 
@@ -173,10 +188,33 @@ class QuestionController extends AbstractController
             'stats' => json_encode($stats),
         ]);
     }
+
+
+    #[Route('/{id}/choice', name: 'question_choice', methods: ['GET', 'POST'])]
+    public function choices(Request $request, Question $question, AnswerRepository $answertRepository): Response
+    {
+        if ($question->getUser() == $this->getUser()) {
+
+
+            $answer = new Answer();
+            $form = $this->createForm(AnswerType::class, $answer);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $answer->setQuestion($question);
+                $entityManager->persist($answer);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('question_show', ['id' => $question->getId()]);
+            }
+
+            return $this->render('answer/new.html.twig', [
+                'question' => $question,
+                'answer' => $answer,
+                'form' => $form->createView(),
+            ]);
+        }
+        return $this->redirectToRoute('question_show', ['id' => $question->getId()]);
+    }
 }
-/* array(2) { 
-    [0]=> array(2) { 
-        ["answer_id"]=> string(1) "1" 
-        ["number"]=> int(2) 
-    } 
-    [1]=> array(2) { ["answer_id"]=> string(1) "2" ["number"]=> int(2) } } */

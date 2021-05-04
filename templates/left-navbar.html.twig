@@ -2,7 +2,7 @@
   <div class="sb-sidenav-menu">
     <div class="nav">
       <div class="sb-sidenav-menu-heading">Core</div>
-      <a class="nav-link" href="index.html">
+      <a class="nav-link" href="/">
         <div class="sb-nav-link-icon">
           <i class="fas fa-tachometer-alt"></i>
         </div>
@@ -30,31 +30,54 @@
         data-parent="#sidenavAccordion"
       >
         <nav class="sb-sidenav-menu-nested nav">
-          <a class="nav-link" href="/questions"
-            >Liste de toutes les questions</a
-          >
+          <a class="nav-link" href="/questions">All questions</a>
           {% if app.user %}
-          <a class="nav-link" href="/questions/myquestions"
-            >Liste de mes questions</a
-          >
-          <a class="nav-link" href="/users/{{ app.user.id }}/questions"
-            >Liste de tes questions</a
-          >
-          <a class="nav-link" href="/questions/new">Ajouter une question</a>
+          <a class="nav-link" href="/questions/myquestions">My questions</a>
+
+          <a class="nav-link" href="/questions/new">New question</a>
           {% endif %}
         </nav>
       </div>
+      {% if is_granted('ROLE_ADMIN') %}
+      <a
+        class="nav-link collapsed"
+        href="#"
+        data-toggle="collapse"
+        data-target="#collapseChoices"
+        aria-expanded="false"
+        aria-controls="collapseChoices"
+      >
+        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+        Choices
+        <div class="sb-sidenav-collapse-arrow">
+          <i class="fas fa-angle-down"></i>
+        </div>
+      </a>
+      <div
+        class="collapse"
+        id="collapseChoices"
+        aria-labelledby="headingOne"
+        data-parent="#sidenavAccordion"
+      >
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" href="/answers">All choices</a>
+          {% if app.user %}
 
+          <a class="nav-link" href="/answers/new">Add a choice</a>
+          {% endif %}
+        </nav>
+      </div>
+      {% endif %} {% if app.user %}
       <a
         class="nav-link collapsed"
         href="#"
         data-toggle="collapse"
         data-target="#collapseAnswers"
         aria-expanded="false"
-        aria-controls="collapseAnswers"
+        aria-controls="collapseQuestions"
       >
         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-        Réponses
+        Answer
         <div class="sb-sidenav-collapse-arrow">
           <i class="fas fa-angle-down"></i>
         </div>
@@ -66,104 +89,14 @@
         data-parent="#sidenavAccordion"
       >
         <nav class="sb-sidenav-menu-nested nav">
-          <a class="nav-link" href="/answers">Liste de toutes les réponses</a>
-          {% if app.user %}
-          <a class="nav-link" href="/users/{{ app.user.id }}/answers"
-            >Liste de tes réponses</a
-          >
-          <a class="nav-link" href="/answers/new">Ajouter une réponse</a>
-          {% endif %}
+          {% if is_granted('ROLE_ADMIN') %}
+          <a class="nav-link" href="/results">All answers</a>
+          <a class="nav-link" href="/results/new">Add an answer</a>
+          {%endif%}
+          <a class="nav-link" href="/questions/myquestions">My answers</a>
         </nav>
       </div>
-      <a
-        class="nav-link collapsed"
-        href="#"
-        data-toggle="collapse"
-        data-target="#collapsePages"
-        aria-expanded="false"
-        aria-controls="collapsePages"
-      >
-        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-        Ajouter une réponse
-        <div class="sb-sidenav-collapse-arrow">
-          <i class="fas fa-angle-down"></i>
-        </div>
-      </a>
-      <div
-        class="collapse"
-        id="collapsePages"
-        aria-labelledby="headingTwo"
-        data-parent="#sidenavAccordion"
-      >
-        <nav
-          class="sb-sidenav-menu-nested nav accordion"
-          id="sidenavAccordionPages"
-        >
-          <a
-            class="nav-link collapsed"
-            href="#"
-            data-toggle="collapse"
-            data-target="#pagesCollapseAuth"
-            aria-expanded="false"
-            aria-controls="pagesCollapseAuth"
-          >
-            Authentication
-            <div class="sb-sidenav-collapse-arrow">
-              <i class="fas fa-angle-down"></i>
-            </div>
-          </a>
-          <div
-            class="collapse"
-            id="pagesCollapseAuth"
-            aria-labelledby="headingOne"
-            data-parent="#sidenavAccordionPages"
-          >
-            <nav class="sb-sidenav-menu-nested nav">
-              <a class="nav-link" href="{{ path('app_login') }}">Login</a>
-              <a class="nav-link" href="{{ path('app_register') }}">Register</a>
-              <a
-                class="nav-link"
-                href="{{ path('app_forgot_password_request') }}"
-                >Forgot Password</a
-              >
-            </nav>
-          </div>
-          <a
-            class="nav-link collapsed"
-            href="#"
-            data-toggle="collapse"
-            data-target="#pagesCollapseError"
-            aria-expanded="false"
-            aria-controls="pagesCollapseError"
-          >
-            Error
-            <div class="sb-sidenav-collapse-arrow">
-              <i class="fas fa-angle-down"></i>
-            </div>
-          </a>
-          <div
-            class="collapse"
-            id="pagesCollapseError"
-            aria-labelledby="headingOne"
-            data-parent="#sidenavAccordionPages"
-          >
-            <nav class="sb-sidenav-menu-nested nav">
-              <a class="nav-link" href="401.html">401 Page</a>
-              <a class="nav-link" href="404.html">404 Page</a>
-              <a class="nav-link" href="500.html">500 Page</a>
-            </nav>
-          </div>
-        </nav>
-      </div>
-      <div class="sb-sidenav-menu-heading">Addons</div>
-      <a class="nav-link" href="charts.html">
-        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-        Charts
-      </a>
-      <a class="nav-link" href="tables.html">
-        <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-        Tables
-      </a>
+      {% endif %}
     </div>
   </div>
   {% if app.user %}
