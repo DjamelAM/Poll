@@ -8,6 +8,13 @@
 />
 {% endblock %} {% block body %}
 <h1>Results of : {{ question.label }}</h1>
+<a href="{{ path('question_show', { id: question.id }) }}"
+  >back to question details</a
+>
+{% if stats|length == 2 %}
+<h5>No vote found for this question</h5>
+{% endif %}
+
 <div id="chartDiv" style="max-width: 600px; margin: auto">
   <canvas id="stats" width="200" height="200"></canvas>
 </div>

@@ -47,13 +47,12 @@ false %}
 </table>
 
 <a href="{{ path('question_index') }}">back to list</a>
-{% if app.user == question.user or app.user.roles = [ROLE_ADMIN] %}
+{% if app.user == question.user or is_granted('ROLE_ADMIN') %}
 <a href="{{ path('question_edit', { id: question.id }) }}">edit</a>
 {{ include("question/_delete_form.html.twig") }}
 
 <a href="{{ path('question_choice', { id: question.id }) }}">add choice</a>
-{% endif %} {% endif %} {% if (question.endDate == null or question.endDate >
-date) and (!question.isUserOnly or (question.isUserOnly and app.user))%}
+{% endif %} {% if (question.endDate == null or question.endDate > date) %}
 <a href="{{ path('question_answer', { id: question.id }) }}">answer</a>
 {% endif %}
 <a href="{{ path('question_stats', { id: question.id }) }}">stats</a>

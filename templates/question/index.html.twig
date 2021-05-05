@@ -20,7 +20,7 @@ block body %}
 
       <td>
         <a href="{{ path('question_show', { id: question.id }) }}">show</a>
-        {% if app.user %}
+        {% if app.user == question.user or is_granted('ROLE_ADMIN') %}
         <a href="{{ path('question_edit', { id: question.id }) }}">edit</a>
         {% endif %}
       </td>

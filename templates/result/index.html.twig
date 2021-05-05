@@ -17,7 +17,9 @@ block body %}
 
     <tr>
       <td>{{ result.id }}</td>
-      <td>{{ result.getUser() }}</td>
+      <td>
+        {{ result.getUser() == null ? result.getIp() : result.getUser() }}
+      </td>
       <td>{{ result.getQuestion() }}</td>
       <td>{{ result.getAnswer() }}</td>
 
