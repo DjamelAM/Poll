@@ -3,7 +3,7 @@
 /.env.local
 /.env.local.php
 /.env.*.local
-/.env
+
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
@@ -21,3 +21,4 @@
 /question.sql
 /user.sql
 /TRUC.json
+/.env
