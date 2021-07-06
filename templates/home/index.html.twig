@@ -15,14 +15,17 @@
     !
   </h2>
   <h4>
-    You can add question with an account,
+    You can add question with an account  {% if app.user %} ,
     <a
       class="nav-link"
       href="/register"
       style="display: inline-block; padding: 0"
-      >register now.</a
-    >
-    It provides an interface to see all your questions and all your answers to
+      >register now. O</a>
+      r use this dummy account :
+      email : test@admin.fr
+      password : admin </h4>
+      {% endif %}
+    <h4>It provides an interface to see all your questions and all your answers to
     poll.
   </h4>
 </div>
